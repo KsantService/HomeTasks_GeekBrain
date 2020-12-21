@@ -8,44 +8,22 @@ namespace HomeWork
 {
   class Program
   {
+    private const int personCount = 4;
     static void Main(string[] args)
     {
-      int rowCount,columnCount;
-
-      Console.WriteLine("Задайте число строк в матрице, пожалуйста:");
-      while (!Int32.TryParse(Console.ReadLine(), out rowCount)||rowCount<=0)
+      string[] firstNames = {"Александра", "Борис", "Валерия", "Георгий"};
+      string[] lastNames = {"Дмитриева", "Егоров", "Ёлкина", "Жданов"};
+      string[] patronymics = {"Захаровна", "Игоревич", "Константиновна", "Леонидович"};
+      for (int i = 0; i < personCount; i++)
       {
-        Console.WriteLine("Задано некорректное значение числа строк. Значение должно быть целым положительным числом");
+        Console.WriteLine(GetFullName(firstNames[i],lastNames[i],patronymics[i]));
       }
-
-      Console.WriteLine("Задайте число столбцов в матрице, пожалуйста:");
-      while (!Int32.TryParse(Console.ReadLine(), out columnCount)||columnCount<=0)
-      {
-        Console.WriteLine("Задано некорректное значение числа столбцов. Значение должно быть целым положительным числом");
-      }
-
-      Console.WriteLine($"Cтроим случайную матрицу размера {rowCount}x{columnCount}");
-
-      Random random = new Random();
-      int[,] matrix = new int[rowCount,columnCount];
-      for (int i = 0; i < rowCount; i++)
-      {
-        for (int j = 0; j < columnCount; j++)
-        {
-          matrix[i, j] = random.Next(100);
-          Console.Write($"{matrix[i,j]}\t");
-        }
-        Console.WriteLine();
-      }
-
-      Console.WriteLine("Диагональные элементы матрицы:");
-      int minDim = Math.Min(rowCount, columnCount);
-      for (int i = 0; i < minDim; i++)
-      {
-        Console.Write($"{matrix[i,i]} ");
-      }
- 
       Console.ReadKey();
+    }
+
+    private static string GetFullName(string firstName, string lastName, string patronymic)
+    {
+      return string.Format($"{lastName} {firstName} {patronymic}");
     }
   }
 }
