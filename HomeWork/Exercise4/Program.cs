@@ -12,31 +12,44 @@ namespace Exercise4
     private const string fileName = "output.txt";
     static void Main(string[] args)
     {
-     Console.WriteLine("Введите путь");
-     string path = Console.ReadLine();
-     while (!Directory.Exists(path))
-     {
-       Console.WriteLine("Такой директории не существует, попробуйте еще раз");
-       path = Console.ReadLine();
-     }
-     File.WriteAllText(fileName,String.Empty);
-     WriteDirecory(path);
+      string path = GetValidPath();
+      File.WriteAllText(fileName, string.Empty);
+      WriteDirecory(path);
+    }
+
+    private static string GetValidPath()
+    {
+      Console.WriteLine("Введите путь");
+      string path = Console.ReadLine();
+      while (!Directory.Exists(path))
+      {
+        Console.WriteLine("Такой директории не существует, попробуйте еще раз");
+        path = Console.ReadLine();
+      }
+
+      return path;
     }
 
     private static void WriteDirecory(string path)
     {
-      File.AppendAllText(fileName,path+"\n");
-      
-      foreach( string childPath in Directory.EnumerateDirectories(path))
+      List<string> FoldersAndFiles = new List<string>();
+      ProcessDirectory(path,FoldersAndFiles,"");
+      File.AppendAllLines(fileName, FoldersAndFiles);
+    }
+
+    private static void ProcessDirectory(string path, List<string> list, string tabStr)
+    {
+      list.Add(tabStr + path);
+      foreach (string childPath in Directory.EnumerateDirectories(path))
       {
-        WriteDirecory(childPath);
+        ProcessDirectory(childPath, list,tabStr+" \t");
       }
       foreach (string childFileName in Directory.GetFiles(path))
       {
-        File.AppendAllText(fileName, Path.Combine(path,fileName)+"\n");
+        list.Add(tabStr+Path.GetFileName(childFileName));
       }
-      
     }
-    
+
+
   }
 }

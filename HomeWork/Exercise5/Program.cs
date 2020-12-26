@@ -11,23 +11,13 @@ namespace Exercise5
   class Program
   {
     private const string jsonFileName = "tasks.json";
-
-    enum Comand
-    {
-      Add,
-      Delete,
-      Done,
-      Exit,
-      Unknown
-    }
-
     static void Main(string[] args)
     {
       ToDoList List = CreateToDoList();
-      bool exit = false;
-      while (!exit)
+      bool continueCycle = true;
+      while (continueCycle)
       {
-        MainCycle(List, ref exit);
+        continueCycle = MainCycle(List);
       }
     }
 
@@ -47,115 +37,46 @@ namespace Exercise5
       Console.WriteLine("Нажмите \nn  - добавить задание\nc  - отметить как выполненное\nd  - удалить задание\ne  -  сохранить список и выйти");
     }
 
-    private static Comand getComand()
+    private static Comand GetComand()
     {
-      Comand comand = Comand.Unknown;
-      while (comand == Comand.Unknown)
+      bool needComand = true;
+      while (needComand)
       {
         char key = Console.ReadKey(true).KeyChar;
         switch (key)
         {
           case ('n'):
-            comand = Comand.Add;
-            break;
+            return new AddComand();
           case ('c'):
-            comand = Comand.Done;
-            break;
+            return new CheckComand();
           case ('d'):
-            comand = Comand.Delete;
-            break;
+            return new DeleteComand();
           case ('e'):
-            comand = Comand.Exit;
-            break;
+            return new ExitComand(jsonFileName);
           default:
             {
               Console.WriteLine("Вы ввели несуществующую команду");
-              comand = Comand.Unknown;
               break;
             }
         }
       }
-      return comand;
+      return null;
     }
 
-    public static void MainCycle(ToDoList List, ref bool exit)
+    public static bool MainCycle(ToDoList List)
     {
       Console.Clear();
       List.Show();
       ShowMenu();
-      Comand comand = getComand();
-      ExecuteCommand(List, comand, ref exit);
-    }
-
-    private static void ExecuteCommand(ToDoList List, Comand comand, ref bool exit)
-    {
-      switch (comand)
+      Comand comand = GetComand();
+      comand.RequestParam();
+      string param = comand.ReadParam();
+      while (!comand.ValidateParam(param))
       {
-        case Comand.Add:
-          AddTaskToList(List);
-          break;
-        case Comand.Done:
-          DoTask(List);
-          break;
-        case Comand.Delete:
-          DeleteTask(List);
-          break;
-        case Comand.Exit:
-          Exit(List, ref exit);
-          break;
-        default:
-          Console.WriteLine("Чтото не то");
-          break;
+        param = Console.ReadLine();
       }
+      comand.SetParam(param);
+      return comand.Execute(List);
     }
-
-    private static void AddTaskToList(ToDoList list)
-    {
-      string title = GetString();
-      list.AddTask(title);
-    }
-
-    private static void DoTask(ToDoList list)
-    {
-      int number = GetNumber();
-      list.SetLikeDone(number);
-    }
-    private static void DeleteTask(ToDoList list)
-    {
-      int number = GetNumber();
-      list.RemoveTask(number);
-    }
-
-    private static void Exit(ToDoList list, ref bool exit)
-    {
-      list.Save(jsonFileName);
-      exit = true;
-    }
-
-    private static int GetNumber()
-    {
-      Console.WriteLine("Введите номер задания");
-      uint number;
-      while (!uint.TryParse(Console.ReadLine(), out number))
-      {
-        Console.WriteLine("Номер должен быть положительным числом");
-      }
-
-      return (int)number;
-    }
-
-    private static string GetString()
-    {
-      Console.WriteLine("Введите название задания");
-      string title = Console.ReadLine();;
-      while (string.IsNullOrWhiteSpace(title))
-      {
-        Console.WriteLine("Название должно быть не пустым");
-        title = Console.ReadLine();
-      }
-
-      return title;
-    }
-    
   }
 }

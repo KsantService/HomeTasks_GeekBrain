@@ -71,6 +71,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddComand.cs" />
+    <Compile Include="CheckComand.cs" />
+    <Compile Include="Comand.cs" />
+    <Compile Include="DeleteComand.cs" />
+    <Compile Include="ExitComand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ToDo.cs" />
